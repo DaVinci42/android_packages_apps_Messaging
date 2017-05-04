@@ -75,11 +75,11 @@ else
     LOCAL_PROGUARD_FLAG_FILES += proguard-release.flags
 endif
 
-LOCAL_PACKAGE_NAME := message
+LOCAL_PACKAGE_NAME := messaging
 
 LOCAL_CERTIFICATE := testkey
 
-DEX_PREOPT_DEFAULT=nostripping
+DEX_PREOPT_DEFAULT := nostripping
 
 LOCAL_SDK_VERSION := current
 
