@@ -93,6 +93,7 @@ public class ReceiveSmsMessageAction extends Action implements Parcelable {
                 DataModel.get().isNewMessageObservable(conversationId);
 
         MessageData message = null;
+        String messageBody;
         // Only the primary user gets to insert the message into the telephony db and into bugle's
         // db. The secondary user goes through this path, but skips doing the actual insert. It
         // goes through this path because it needs to compute messageInFocusedConversation in order
@@ -159,14 +160,18 @@ public class ReceiveSmsMessageAction extends Action implements Parcelable {
                     + ", uri = " + messageUri);
 
             ProcessPendingMessagesAction.scheduleProcessPendingMessagesAction(false, this);
+
+            messageBody = text;
         } else {
             if (LogUtil.isLoggable(TAG, LogUtil.DEBUG)) {
                 LogUtil.d(TAG, "ReceiveSmsMessageAction: Not inserting received SMS message for "
                         + "secondary user.");
             }
         }
+
+        boolean needMute = shouldMuteMessage(messageBody);
         // Show a notification to let the user know a new message has arrived
-        BugleNotifications.update(false/*silent*/, conversationId, BugleNotifications.UPDATE_ALL);
+        BugleNotifications.update(needMute, conversationId, BugleNotifications.UPDATE_ALL);
 
         MessagingContentProvider.notifyMessagesChanged(conversationId);
         MessagingContentProvider.notifyPartsChanged();
@@ -194,5 +199,20 @@ public class ReceiveSmsMessageAction extends Action implements Parcelable {
     @Override
     public void writeToParcel(final Parcel parcel, final int flags) {
         writeActionToParcel(parcel, flags);
+    }
+
+
+    public static boolean shouldMuteMessage(String msgBody) {
+        if (msgBody == null) return false;
+
+        // update at your own risk
+        String[] blockwords = new String[]{"TD", "退订", "td退", "新闻:"};
+
+        for (String word : blockwords) {
+            if (msgBody.contains(word)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
