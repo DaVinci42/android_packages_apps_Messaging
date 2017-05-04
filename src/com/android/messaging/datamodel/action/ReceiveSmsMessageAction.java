@@ -93,7 +93,7 @@ public class ReceiveSmsMessageAction extends Action implements Parcelable {
                 DataModel.get().isNewMessageObservable(conversationId);
 
         MessageData message = null;
-        String messageBody;
+        String messageBody = null;
         // Only the primary user gets to insert the message into the telephony db and into bugle's
         // db. The secondary user goes through this path, but skips doing the actual insert. It
         // goes through this path because it needs to compute messageInFocusedConversation in order
