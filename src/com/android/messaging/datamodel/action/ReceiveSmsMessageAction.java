@@ -201,14 +201,21 @@ public class ReceiveSmsMessageAction extends Action implements Parcelable {
         writeActionToParcel(parcel, flags);
     }
 
-
     public static boolean shouldMuteMessage(String msgBody) {
         if (msgBody == null) return false;
-
         // update at your own risk
-        String[] blockwords = new String[]{"TD", "退订", "td退", "新闻:"};
+        String[] keywords = new String[]{
+                "TD",
+                "退订",
+                "td退",
+                "新闻:",
+                "http://",
+                "https://",
+                "VIP",
+                "vip"
+        };
 
-        for (String word : blockwords) {
+        for (String word : keywords) {
             if (msgBody.contains(word)) {
                 return true;
             }
